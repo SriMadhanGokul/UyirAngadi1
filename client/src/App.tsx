@@ -1,20 +1,20 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import { LoadingState } from './components/Feedback';
-import PublicLayout from './layouts/PublicLayout';
-import SearchPage from './pages/SearchPage';
-import SoldHistoryPage from './pages/SoldHistoryPage';
-import ListingDetailPage from './pages/ListingDetailPage';
-import SellPage from './pages/SellPage';
-import LoginPage from './pages/LoginPage';
-import ProfilePage from './pages/ProfilePage';
-import FavouritesPage from './pages/FavouritesPage';
-import SellerDashboardPage from './pages/SellerDashboardPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
-import MyEnquiriesPage from './pages/MyEnquiriesPage';
-import StaticPage from './pages/StaticPage';
-import NotFoundPage from './pages/NotFoundPage';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { LoadingState } from "./components/Feedback";
+import PublicLayout from "./layouts/PublicLayout";
+import SearchPage from "./pages/SearchPage";
+import SoldHistoryPage from "./pages/SoldHistoryPage";
+import ListingDetailPage from "./pages/ListingDetailPage";
+import SellPage from "./pages/SellPage";
+import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
+import FavouritesPage from "./pages/FavouritesPage";
+import SellerDashboardPage from "./pages/SellerDashboardPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import MyEnquiriesPage from "./pages/MyEnquiriesPage";
+import StaticPage from "./pages/StaticPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 /**
  * Public landing page: everyone can browse listings directly, while actual
@@ -43,7 +43,10 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="search" element={<Navigate to="/listings" replace />} />
+            <Route
+              path="search"
+              element={<Navigate to="/listings" replace />}
+            />
             <Route path="listings/:id" element={<ListingDetailPage />} />
             <Route path="about" element={<StaticPage page="about" />} />
             <Route path="terms" element={<StaticPage page="terms" />} />
@@ -111,7 +114,10 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="dashboard/listings" element={<Navigate to="/dashboard" replace />} />
+          <Route
+            path="dashboard/listings"
+            element={<Navigate to="/dashboard" replace />}
+          />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

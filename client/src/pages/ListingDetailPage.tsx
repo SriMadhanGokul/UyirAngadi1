@@ -1,16 +1,19 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import Seo from '../components/Seo';
-import ContactButtons from '../components/ContactButtons';
-import ListingGrid from '../components/ListingGrid';
-import ReportModal from '../components/ReportModal';
-import { SuccessBanner } from '../components/Feedback';
-import { favouriteService } from '../services';
-import listingService from '../services/listingService';
-import { useAuth } from '../context/AuthContext';
-import type { Listing } from '../types';
-import { CATEGORY_DETAIL_FIELDS, getDetailFieldLabel } from '../utils/constants';
+import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import Seo from "../components/Seo";
+import ContactButtons from "../components/ContactButtons";
+import ListingGrid from "../components/ListingGrid";
+import ReportModal from "../components/ReportModal";
+import { SuccessBanner } from "../components/Feedback";
+import { favouriteService } from "../services";
+import listingService from "../services/listingService";
+import { useAuth } from "../context/AuthContext";
+import type { Listing } from "../types";
+import {
+  CATEGORY_DETAIL_FIELDS,
+  getDetailFieldLabel,
+} from "../utils/constants";
 import {
   formatAge,
   formatBoolean,
@@ -18,17 +21,20 @@ import {
   formatPrice,
   formatPublicLocation,
   formatYear,
-} from '../utils/format';
-import { getCategoryIcon } from '../utils/categoryIcons';
+} from "../utils/format";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
-const RECENT_KEY = 'uyirangadi_recent';
+const RECENT_KEY = "uyirangadi_recent";
 
 /** Keeps a small client-side "recently viewed" list (localStorage, max 12). */
 function rememberView(listing: Listing) {
   try {
     const raw = localStorage.getItem(RECENT_KEY);
     const list: string[] = raw ? JSON.parse(raw) : [];
-    const next = [listing._id, ...list.filter((item: string) => item !== listing._id)].slice(0, 12);
+    const next = [
+      listing._id,
+      ...list.filter((item: string) => item !== listing._id),
+    ].slice(0, 12);
     localStorage.setItem(RECENT_KEY, JSON.stringify(next));
   } catch {
     /* storage disabled - ignore */
@@ -36,7 +42,7 @@ function rememberView(listing: Listing) {
 }
 
 export default function ListingDetailPage() {
-  const { id = '' } = useParams();
+  const { id = "" } = useParams();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
@@ -66,7 +72,7 @@ export default function ListingDetailPage() {
       })
       .catch((err: unknown) => {
         if (cancelled) return;
-        const message = err instanceof Error ? err.message : t('common.error');
+        const message = err instanceof Error ? err.message : t("common.error");
         if (/not.*found|could not be found/i.test(message)) setNotFound(true);
         else setError(message);
       })
@@ -82,8 +88,12 @@ export default function ListingDetailPage() {
   useEffect(() => {
     if (!listing) return;
     listingService
-      .list({ category: listing.category, page: 1, limit: 5, sort: 'newest' })
-      .then((res) => setSimilar(res.data.filter((item) => item._id !== listing._id).slice(0, 4)))
+      .list({ category: listing.category, page: 1, limit: 5, sort: "newest" })
+      .then((res) =>
+        setSimilar(
+          res.data.filter((item) => item._id !== listing._id).slice(0, 4),
+        ),
+      )
       .catch(() => setSimilar([]));
   }, [listing]);
 
@@ -98,7 +108,7 @@ export default function ListingDetailPage() {
 
   const toggleSave = useCallback(async () => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: `/listings/${id}` } });
+      navigate("/login", { state: { from: `/listings/${id}` } });
       return;
     }
     try {
@@ -114,7 +124,8 @@ export default function ListingDetailPage() {
     }
   }, [id, isAuthenticated, navigate, saved]);
 
-  const ownerId = typeof listing?.seller === 'object' ? listing.seller._id : null;
+  const ownerId =
+    typeof listing?.seller === "object" ? listing.seller._id : null;
   const isOwner = Boolean(ownerId && user?._id === ownerId);
 
   if (isLoading) {
@@ -130,26 +141,28 @@ export default function ListingDetailPage() {
   if (notFound || !listing) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <Seo title={t('listing.notFound')} noIndex />
+        <Seo title={t("listing.notFound")} noIndex />
         <p className="text-5xl">🐾</p>
-        <h1 className="page-title mt-4">{t('listing.notFound')}</h1>
-        <p className="mt-2 text-sm text-neutral-600">{t('listing.notFoundText')}</p>
+        <h1 className="page-title mt-4">{t("listing.notFound")}</h1>
+        <p className="mt-2 text-sm text-neutral-600">
+          {t("listing.notFoundText")}
+        </p>
         <Link to="/listings" className="btn-primary mt-6">
-          {t('buyer.browse')}
+          {t("buyer.browse")}
         </Link>
       </div>
     );
   }
 
-  const isSold = listing.status === 'SOLD';
+  const isSold = listing.status === "SOLD";
   const age = formatAge(listing.age, t);
   const photos = listing.photos ?? [];
   const selectedPhoto = photos[selectedPhotoIndex] ?? photos[0];
-  const seller = typeof listing.seller === 'object' ? listing.seller : null;
+  const seller = typeof listing.seller === "object" ? listing.seller : null;
   const detailFields = CATEGORY_DETAIL_FIELDS[listing.category] ?? [];
   const storedDetails = listing.categorySpecificDetails ?? {};
   const extraKeys = Object.keys(storedDetails).filter(
-    (key) => !detailFields.some((field) => field.name === key)
+    (key) => !detailFields.some((field) => field.name === key),
   );
 
   return (
@@ -168,11 +181,16 @@ export default function ListingDetailPage() {
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
         <nav className="mb-4 flex items-center gap-1.5 text-xs text-neutral-500">
           <Link to="/" className="hover:underline">
-            {t('nav.home')}
+            {t("nav.home")}
           </Link>
           <span>/</span>
-          <Link to={`/listings?category=${listing.category}`} className="hover:underline">
-            {t(`categories.${listing.category}`, { defaultValue: listing.category })}
+          <Link
+            to={`/listings?category=${listing.category}`}
+            className="hover:underline"
+          >
+            {t(`categories.${listing.category}`, {
+              defaultValue: listing.category,
+            })}
           </Link>
           <span>/</span>
           <span className="truncate text-neutral-700">{listing.title}</span>
@@ -191,8 +209,8 @@ export default function ListingDetailPage() {
                       alt={listing.title}
                       className={
                         isSold
-                          ? 'h-full w-full object-cover opacity-60'
-                          : 'h-full w-full object-cover transition duration-200'
+                          ? "h-full w-full object-cover opacity-60"
+                          : "h-full w-full object-cover transition duration-200"
                       }
                     />
                     {photos.length > 1 && (
@@ -202,7 +220,7 @@ export default function ListingDetailPage() {
                     )}
                     {isSold && (
                       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-neutral-900/85 px-5 py-2 text-sm font-bold uppercase tracking-wide text-white">
-                        {t('seller.status.SOLD')}
+                        {t("seller.status.SOLD")}
                       </span>
                     )}
                   </div>
@@ -222,9 +240,11 @@ export default function ListingDetailPage() {
                     type="button"
                     onClick={() => setSelectedPhotoIndex(index)}
                     className={[
-                      'relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-neutral-100 sm:h-20 sm:w-20',
-                      selectedPhotoIndex === index ? 'border-brand-500 shadow-sm' : 'border-neutral-200',
-                    ].join(' ')}
+                      "relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-neutral-100 sm:h-20 sm:w-20",
+                      selectedPhotoIndex === index
+                        ? "border-brand-500 shadow-sm"
+                        : "border-neutral-200",
+                    ].join(" ")}
                     aria-label={`${listing.title} photo ${index + 1}`}
                   >
                     <img
@@ -240,7 +260,11 @@ export default function ListingDetailPage() {
 
             {listing.video && (
               <div className="card mt-4 overflow-hidden p-2 sm:p-3">
-                <video src={listing.video} controls className="w-full rounded-xl bg-black" />
+                <video
+                  src={listing.video}
+                  controls
+                  className="w-full rounded-xl bg-black"
+                />
               </div>
             )}
           </div>
@@ -250,8 +274,10 @@ export default function ListingDetailPage() {
             <div className="card p-4 sm:p-5">
               <div className="flex items-start justify-between gap-3">
                 <span className="chip">
-                  {getCategoryIcon(listing.category)}{' '}
-                  {t(`categories.${listing.category}`, { defaultValue: listing.category })}
+                  {getCategoryIcon(listing.category)}{" "}
+                  {t(`categories.${listing.category}`, {
+                    defaultValue: listing.category,
+                  })}
                 </span>
                 <button
                   type="button"
@@ -259,7 +285,7 @@ export default function ListingDetailPage() {
                   hidden={isOwner}
                   className="rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
                 >
-                  {saved ? `♥ ${t('listing.saved')}` : `♡ ${t('listing.save')}`}
+                  {saved ? `♥ ${t("listing.saved")}` : `♡ ${t("listing.save")}`}
                 </button>
               </div>
 
@@ -271,21 +297,29 @@ export default function ListingDetailPage() {
                 {formatPrice(listing.price)}
               </p>
               <p className="text-xs font-medium text-neutral-500">
-                {listing.isNegotiable ? t('listing.negotiable') : t('listing.fixedPrice')}
+                {listing.isNegotiable
+                  ? t("listing.negotiable")
+                  : t("listing.fixedPrice")}
               </p>
 
               <p className="mt-3 flex items-center gap-1 text-sm text-neutral-600">
                 📍 {formatPublicLocation(listing)}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
-                {t('listing.views', { count: listing.views })} ·{' '}
-                {t('listing.posted', { date: formatDate(listing.createdAt, i18n.language) })}
+                {t("listing.views", { count: listing.views })} ·{" "}
+                {t("listing.posted", {
+                  date: formatDate(listing.createdAt, i18n.language),
+                })}
               </p>
 
               {isSold ? (
                 <div className="mt-4 rounded-xl bg-neutral-100 p-4">
-                  <p className="text-sm font-bold text-neutral-900">{t('listing.soldTitle')}</p>
-                  <p className="mt-1 text-xs text-neutral-600">{t('listing.soldText')}</p>
+                  <p className="text-sm font-bold text-neutral-900">
+                    {t("listing.soldTitle")}
+                  </p>
+                  <p className="mt-1 text-xs text-neutral-600">
+                    {t("listing.soldText")}
+                  </p>
                 </div>
               ) : (
                 <div className="mt-5">
@@ -295,7 +329,7 @@ export default function ListingDetailPage() {
 
               {reported && (
                 <div className="mt-3">
-                  <SuccessBanner message={t('report.success')} />
+                  <SuccessBanner message={t("report.success")} />
                 </div>
               )}
 
@@ -303,46 +337,56 @@ export default function ListingDetailPage() {
                 type="button"
                 hidden={isOwner}
                 onClick={() =>
-                  isAuthenticated ? setReportOpen(true) : navigate('/login', { state: { from: `/listings/${id}` } })
+                  isAuthenticated
+                    ? setReportOpen(true)
+                    : navigate("/login", { state: { from: `/listings/${id}` } })
                 }
                 className="btn-ghost btn-sm mt-4 w-full text-red-600"
               >
-                🚩 {t('listing.report')}
+                🚩 {t("listing.report")}
               </button>
             </div>
 
             {/* Attribute table */}
             <div className="card mt-4 p-5">
-              <h2 className="section-title">{t('listing.details')}</h2>
+              <h2 className="section-title">{t("listing.details")}</h2>
               <dl className="mt-3 space-y-2 text-sm">
-                <Row label={t('listing.category')}>
-                  {t(`categories.${listing.category}`, { defaultValue: listing.category })}
+                <Row label={t("listing.category")}>
+                  {t(`categories.${listing.category}`, {
+                    defaultValue: listing.category,
+                  })}
                 </Row>
-                {listing.breed && <Row label={t('listing.breed')}>{listing.breed}</Row>}
-                {age && <Row label={t('listing.age')}>{age}</Row>}
+                {listing.breed && (
+                  <Row label={t("listing.breed")}>{listing.breed}</Row>
+                )}
+                {age && <Row label={t("listing.age")}>{age}</Row>}
                 {listing.gender && (
-                  <Row label={t('listing.gender')}>
+                  <Row label={t("listing.gender")}>
                     {t(`listing.${listing.gender.toLowerCase()}`)}
                   </Row>
                 )}
-                <Row label={t('listing.location')}>{formatPublicLocation(listing)}</Row>
+                <Row label={t("listing.location")}>
+                  {formatPublicLocation(listing)}
+                </Row>
                 {listing.vaccinationInfo && (
-                  <Row label={t('listing.vaccinationInfo')}>{listing.vaccinationInfo}</Row>
+                  <Row label={t("listing.vaccinationInfo")}>
+                    {listing.vaccinationInfo}
+                  </Row>
                 )}
                 {listing.healthInfo && (
-                  <Row label={t('listing.healthInfo')}>{listing.healthInfo}</Row>
+                  <Row label={t("listing.healthInfo")}>
+                    {listing.healthInfo}
+                  </Row>
                 )}
               </dl>
             </div>
           </div>
         </div>
 
-
-
         {/* Description + dynamic category details */}
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.45fr_0.95fr]">
           <div className="card p-4 sm:p-5">
-            <h2 className="section-title">{t('listing.description')}</h2>
+            <h2 className="section-title">{t("listing.description")}</h2>
             <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-neutral-700">
               {listing.description}
             </p>
@@ -351,17 +395,23 @@ export default function ListingDetailPage() {
           {(detailFields.length > 0 || extraKeys.length > 0) && (
             <div className="card p-4 sm:p-5">
               <h2 className="section-title">
-                {t('sell.categoryDetails', {
-                  category: t(`categories.${listing.category}`, { defaultValue: listing.category }),
+                {t("sell.categoryDetails", {
+                  category: t(`categories.${listing.category}`, {
+                    defaultValue: listing.category,
+                  }),
                 })}
               </h2>
               <dl className="mt-3 space-y-2 text-sm">
                 {detailFields.map((field) => {
                   const value = storedDetails[field.name];
-                  if (value === undefined || value === null || value === '') return null;
+                  if (value === undefined || value === null || value === "")
+                    return null;
                   return (
-                    <Row key={field.name} label={getDetailFieldLabel(field.name, i18n.language)}>
-                      {field.type === 'boolean'
+                    <Row
+                      key={field.name}
+                      label={getDetailFieldLabel(field.name, i18n.language)}
+                    >
+                      {field.type === "boolean"
                         ? formatBoolean(value, i18n.language)
                         : String(value)}
                     </Row>
@@ -369,10 +419,14 @@ export default function ListingDetailPage() {
                 })}
                 {extraKeys.map((key) => {
                   const value = storedDetails[key];
-                  if (value === undefined || value === null || value === '') return null;
+                  if (value === undefined || value === null || value === "")
+                    return null;
                   return (
-                    <Row key={key} label={getDetailFieldLabel(key, i18n.language)}>
-                      {typeof value === 'boolean'
+                    <Row
+                      key={key}
+                      label={getDetailFieldLabel(key, i18n.language)}
+                    >
+                      {typeof value === "boolean"
                         ? formatBoolean(value, i18n.language)
                         : String(value)}
                     </Row>
@@ -387,14 +441,17 @@ export default function ListingDetailPage() {
         <div className="card mt-4 flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex items-center gap-3">
             <span className="grid h-11 w-11 place-items-center rounded-full bg-brand-100 text-base font-bold text-brand-700">
-              {(seller?.name || seller?.phone || 'U').trim().charAt(0).toUpperCase()}
+              {(seller?.name || seller?.phone || "U")
+                .trim()
+                .charAt(0)
+                .toUpperCase()}
             </span>
             <div>
               <p className="text-sm font-bold text-neutral-900">
-                {seller?.name || t('listing.sellerInfo')}
+                {seller?.name || t("listing.sellerInfo")}
               </p>
               <p className="text-xs text-neutral-500">
-                {t('listing.memberSince', {
+                {t("listing.memberSince", {
                   year: formatYear(seller?.createdAt ?? listing.createdAt),
                 })}
               </p>
@@ -410,7 +467,7 @@ export default function ListingDetailPage() {
         {/* Similar */}
         {similar.length > 0 && (
           <section className="mt-8">
-            <h2 className="section-title">{t('listing.similar')}</h2>
+            <h2 className="section-title">{t("listing.similar")}</h2>
             <div className="mt-4">
               <ListingGrid listings={similar} skeletonCount={4} />
             </div>
