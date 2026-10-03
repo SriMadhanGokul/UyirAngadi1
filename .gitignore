@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Local media uploads (dev fallback when Cloudinary is not configured)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Build output
+client/dist/
+client/dist-ssr/
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+coverage/
+*.tsbuildinfo
