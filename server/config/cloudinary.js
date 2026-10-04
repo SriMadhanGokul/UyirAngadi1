@@ -14,9 +14,7 @@ if (isCloudinaryConfigured) {
   });
   console.log('[cloudinary] configured');
 } else {
-  console.warn(
-    '[cloudinary] not configured - falling back to local disk storage under /uploads. Set CLOUDINARY_* env vars for production.'
-  );
+  console.warn('[cloudinary] not configured - user uploads will be disabled. Set CLOUDINARY_* env vars.');
 }
 
 export default cloudinary;

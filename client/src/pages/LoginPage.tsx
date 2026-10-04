@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Seo from '../components/Seo';
-import { ErrorBanner, Spinner } from '../components/Feedback';
+import { ErrorBanner, LoadingState, Spinner } from '../components/Feedback';
 import LanguageSwitcher from '../components/LanguageSwitcher';
 import authService from '../services/authService';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +13,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation() as { state?: { from?: string } };
-  const { isAuthenticated, login, user } = useAuth();
+  const { isAuthenticated, isLoading, login, logout, user } = useAuth();
 
   const defaultTarget = adminMode ? '/admin' : '/listings';
   const redirectFrom = location.state?.from ?? defaultTarget;
@@ -49,6 +49,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     }
     setSubmitting(true);
     try {
+      logout();
       const res = await authService.requestOtp(digits);
       setOtpSent(true);
       setOtp('');
@@ -99,6 +100,15 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
     setSecondsLeft(0);
   };
 
+  const submit = (event: React.FormEvent) => {
+    if (otpSent) {
+      return verify(event);
+    }
+    return sendOtp(event);
+  };
+
+  if (isLoading) return <LoadingState />;
+
   return (
     <div className="mx-auto flex min-h-[80vh] max-w-md flex-col justify-center px-4 py-10">
       <Seo title={t('auth.title')} noIndex />
@@ -117,8 +127,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         <h1 className="text-2xl font-bold text-neutral-900">{t('auth.title')}</h1>
         <p className="mt-1 text-sm text-neutral-600">{t('auth.subtitle')}</p>
 
-        {!otpSent ? (
-        <form onSubmit={sendOtp} className="mt-6 space-y-4" noValidate>
+        <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
           <ErrorBanner message={error} />
 
           <div>
@@ -149,56 +158,59 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
                 autoComplete="tel"
                 maxLength={10}
                 value={digits}
+                disabled={otpSent}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder={t('auth.phonePlaceholder')}
-                className="w-full border-0 px-3.5 py-2.5 text-sm focus:outline-none"
+                className="w-full border-0 px-3.5 py-2.5 text-sm focus:outline-none disabled:bg-neutral-100 disabled:text-neutral-500"
               />
             </div>
           </div>
 
-          <button type="submit" className="btn-primary w-full py-3 text-base" disabled={submitting}>
-            {submitting && <Spinner className="h-4 w-4 text-white" />}
-            {t('auth.sendOtp')}
-          </button>
-        </form>
-        ) : (
-        <form onSubmit={verify} className="mt-6 space-y-4">
-          <ErrorBanner message={error} />
-          <p className="text-sm text-neutral-600">{t('auth.otpSentTo', { phone: maskPhone(digits) })}</p>
-          <input
-            autoFocus
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            maxLength={6}
-            value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-            placeholder={t('auth.otpPlaceholder')}
-            aria-label={t('auth.otp')}
-            className="field text-center text-2xl font-bold tracking-[0.4em]"
-          />
-          {devOtp && (
-            <p className="rounded-xl bg-accent-50 px-3 py-2 text-xs text-accent-800">
-              {t('auth.devHint')} <span className="font-mono font-bold">{devOtp}</span>
-            </p>
+          {otpSent && (
+            <>
+              <p className="text-sm text-neutral-600">{t('auth.otpSentTo', { phone: maskPhone(digits) })}</p>
+              <div>
+                <label className="field-label" htmlFor="otp">{t('auth.otp')}</label>
+                <input
+                  id="otp"
+                  autoFocus
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder={t('auth.otpPlaceholder')}
+                  className="field text-center text-2xl font-bold tracking-[0.4em]"
+                />
+              </div>
+              {devOtp && (
+                <p className="rounded-xl bg-accent-50 px-3 py-2 text-xs text-accent-800">
+                  {t('auth.devHint')} <span className="font-mono font-bold">{devOtp}</span>
+                </p>
+              )}
+            </>
           )}
+
           <button type="submit" className="btn-primary w-full py-3 text-base" disabled={submitting}>
             {submitting && <Spinner className="h-4 w-4 text-white" />}
-            {t('auth.verifyOtp')}
+            {t(otpSent ? 'auth.verifyOtp' : 'auth.sendOtp')}
           </button>
-          <div className="flex items-center justify-between text-xs">
-            {secondsLeft > 0 ? (
-              <span className="text-neutral-500">{t('auth.resendOtp')} ({secondsLeft}s)</span>
-            ) : (
-              <button type="button" className="font-semibold text-brand-700" onClick={() => void sendOtp()}>
-                {t('auth.resendOtp')}
+
+          {otpSent && (
+            <div className="flex items-center justify-between text-xs">
+              {secondsLeft > 0 ? (
+                <span className="text-neutral-500">{t('auth.resendOtp')} ({secondsLeft}s)</span>
+              ) : (
+                <button type="button" className="font-semibold text-brand-700" onClick={() => void sendOtp()}>
+                  {t('auth.resendOtp')}
+                </button>
+              )}
+              <button type="button" className="font-semibold text-neutral-600 hover:underline" onClick={changeNumber}>
+                {t('auth.changeNumber')}
               </button>
-            )}
-            <button type="button" className="font-semibold text-neutral-600 hover:underline" onClick={changeNumber}>
-              {t('auth.changeNumber')}
-            </button>
-          </div>
+            </div>
+          )}
         </form>
-        )}
 
         <p className="mt-5 rounded-xl bg-neutral-100 px-3 py-2 text-xs text-neutral-600">
           {t('auth.devHint')}

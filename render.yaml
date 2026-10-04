@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: uyirangadi
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        value: ""
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 30d
+      - key: FRONTEND_URL
+        value: "https://uyirangadi.onrender.com"
+      - key: CLOUDINARY_CLOUD_NAME
+        value: ""
+      - key: CLOUDINARY_API_KEY
+        value: ""
+      - key: CLOUDINARY_API_SECRET
+        value: ""
+      - key: CLOUDINARY_FOLDER
+        value: uyirangadi
+      - key: SMS_API_KEY
+        value: ""
+      - key: SMS_SENDER_ID
+        value: ""
+      - key: ADMIN_PHONE
+        value: "9999999999"
+      - key: ADMIN_NAME
+        value: Admin

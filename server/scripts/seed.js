@@ -243,6 +243,12 @@ async function run() {
   }
   console.log(`[seed] Categories seeded: ${categories.length}`);
 
+  if (process.argv.includes('--categories-only')) {
+    await mongoose.connection.close();
+    console.log('[seed] Categories-only mode complete.');
+    return;
+  }
+
   // Admin user
   const adminPhone = process.env.ADMIN_PHONE || '9000000001';
   const adminName = process.env.ADMIN_NAME || 'Admin';

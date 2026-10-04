@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # UyirAngadi (உயிர்அங்காடி)
 
 **Tamil Nadu's animal buying & selling marketplace.**
@@ -20,7 +21,7 @@ buyers browse/search/filter and contact sellers by phone or WhatsApp.
 | Database   | MongoDB + Mongoose 9                                                                                   |
 | Auth       | Phone + OTP, bcrypt-hashed OTPs, JWT access tokens                                                     |
 | Validation | Zod                                                                                                    |
-| Media      | Cloudinary (with local `/uploads` fallback for dev)                                                    |
+| Media      | Cloudinary (required for user uploads; no local write fallback)                                        |
 | Security   | Helmet, CORS allow-list, rate limiting, NoSQL-injection guard, input validation, file-type/size checks |
 
 ---
@@ -39,7 +40,7 @@ uyirangadi/
 │   ├── services/               # otpService, uploadService
 │   ├── utils/                  # AppError, catchAsync, jwt, zod validators
 │   ├── scripts/                # seed + verification scripts
-│   ├── uploads/                # local dev media fallback (gitignored)
+│   ├── uploads/                # legacy local media served for existing references
 │   ├── server.js               # entry point
 │   └── .env.example
 ├── package.json                # convenience scripts for both apps
@@ -110,9 +111,9 @@ From the repository root you can also use `npm run build:client`, `npm run dev:s
 | `JWT_SECRET`            | yes      | Long random string used to sign tokens                         |
 | `JWT_EXPIRES_IN`        | no       | Token lifetime (default `30d`)                                 |
 | `FRONTEND_URL`          | yes      | Comma-separated CORS allow-list (e.g. `http://localhost:5173`) |
-| `CLOUDINARY_CLOUD_NAME` | no       | If all three Cloudinary vars are set, media goes to Cloudinary |
-| `CLOUDINARY_API_KEY`    | no       | The API key must have upload ("create") permission             |
-| `CLOUDINARY_API_SECRET` | no       |                                                                |
+| `CLOUDINARY_CLOUD_NAME` | yes for uploads | Cloud name used for image and video uploads                    |
+| `CLOUDINARY_API_KEY`    | yes for uploads | The API key must have upload ("create") permission             |
+| `CLOUDINARY_API_SECRET` | yes for uploads |                                                                |
 | `CLOUDINARY_FOLDER`     | no       | Cloudinary folder for uploads (default `uyirangadi`)           |
 | `SMS_API_KEY`           | no       | If unset, OTPs are printed to the server console (dev mode)    |
 | `ADMIN_PHONE`           | no       | Phone number promoted to ADMIN by the seed script              |
@@ -266,7 +267,7 @@ for moderation failures. Only `APPROVED` listings are publicly searchable.
 - `sanitizeRequest` strips `$`-prefixed and dotted keys from bodies/params (defense-in-depth against NoSQL operator injection); listing query params are whitelisted by schema.
 - Uploads restricted by MIME type (JPG/PNG/WEBP images, MP4/MOV/WEBM video) and size (50 MB cap; 5 MB for avatars).
 - Helmet, strict CORS allow-list (unknown origins get a clean **403**), and rate limiting on OTP + write endpoints.
-- No secrets are ever exposed to the client; media lives in Cloudinary (or `/uploads` in dev), only URLs are stored in MongoDB.
+- No secrets are ever exposed to the client; new media uploads live in Cloudinary, and only URLs are stored in MongoDB.
 
 ---
 
@@ -294,8 +295,8 @@ Rate limiting was verified manually: 10 requests to `/auth/otp/request` succeed,
 - **OTP in development:** without `SMS_API_KEY`, the OTP is written to the server console:
   `[dev-otp] OTP for 9xxxxxxxxx is: 123456 (expires in 5 min)`. Swap in MSG91/Twilio inside
   `server/services/otpService.js` for production.
-- **Media in development:** without Cloudinary credentials, uploads are written to `server/uploads`
-  and served from `/uploads/<file>`. Set the `CLOUDINARY_*` variables for production.
+- **Media uploads:** images and videos are always sent to Cloudinary. Without valid `CLOUDINARY_*`
+  credentials, upload requests fail with HTTP 503; new files are never written to local storage.
 - **API versioning:** all business routes hang off `/api/v1`, so a future `/api/v2` can ship
   without breaking clients.
 
@@ -320,3 +321,6 @@ and security hardening are all in place.
 
 **Current product scope:** classifieds only; no payments, delivery coordination, live chat, or auction workflows.
 Monetization hooks such as `isFeatured` and `featuredUntil` remain available for future work.
+=======
+# UyirAngadi
+>>>>>>> be773fb06c895187f4477eceb34f001faff4a907
