@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiHeart, FiMessageSquare } from 'react-icons/fi';
 import DashboardLayout from '../layouts/DashboardLayout';
 import Seo from '../components/Seo';
 import { EmptyState } from '../components/Feedback';
@@ -42,7 +43,7 @@ export default function MyEnquiriesPage() {
       ) : enquiries.length === 0 ? (
         <div className="card p-6">
           <EmptyState
-            icon="💬"
+            icon={<FiMessageSquare />}
             title={t('buyer.myEnquiries')}
             description={t('buyer.noEnquiries')}
             actionLabel={t('buyer.browse')}
@@ -59,7 +60,7 @@ export default function MyEnquiriesPage() {
                 {enquiry.listing.photos?.[0] ? (
                   <img src={enquiry.listing.photos[0]} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="grid h-full w-full place-items-center text-2xl">🐾</span>
+                  <span className="grid h-full w-full place-items-center text-2xl text-brand-600"><FiHeart /></span>
                 )}
               </Link>
               <div className="min-w-0 flex-1">

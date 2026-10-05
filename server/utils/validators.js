@@ -48,6 +48,31 @@ export const listingCreateSchema = z.object({
 
 export const listingUpdateSchema = listingCreateSchema.partial();
 
+export const adminListingUpdateSchema = z.object({
+  category: z.string().trim().min(1).max(80).optional(),
+  breed: z.string().trim().min(1).max(120).optional(),
+  title: z.string().trim().max(120).optional(),
+  description: z.string().max(3000).optional(),
+  gender: z.enum(['Male', 'Female', 'Other']).optional(),
+  age: z.object({
+    years: z.coerce.number().min(0).optional(),
+    months: z.coerce.number().int().min(0).max(11).optional(),
+  }).optional(),
+  price: z.coerce.number().min(0).optional(),
+  isNegotiable: z.coerce.boolean().optional(),
+  phone: z.string().regex(phoneRegex).optional(),
+  whatsapp: z.union([z.literal(''), z.string().regex(phoneRegex)]).optional(),
+  location: z.object({
+    district: z.string().trim().min(1),
+    taluk: z.string().trim().min(1),
+    village: z.string().trim().min(1),
+    pincode: z.string().regex(/^\d{6}$/),
+  }).optional(),
+  categorySpecificDetails: z.record(z.string(), z.any()).optional(),
+  healthInfo: z.string().max(3000).optional(),
+  vaccinationInfo: z.string().max(3000).optional(),
+});
+
 export const reportSchema = z.object({
   listingId: z.string().min(1),
   reason: z.enum(['FAKE', 'WRONG_INFO', 'SOLD', 'SUSPICIOUS', 'INAPPROPRIATE', 'DUPLICATE', 'OTHER']),
@@ -73,6 +98,52 @@ export const rejectListingSchema = z.object({
 
 export const suspendUserSchema = z.object({
   isSuspended: z.coerce.boolean(),
+});
+
+export const adminListingQuerySchema = z.object({
+  status: z.enum(['DRAFT', 'PENDING', 'APPROVED', 'REJECTED', 'SOLD']).optional(),
+  category: z.string().trim().max(80).optional(),
+  district: z.string().trim().max(80).optional(),
+  seller: z.string().trim().max(120).optional(),
+  q: z.string().trim().max(120).optional(),
+  dateFrom: z.coerce.date().optional(),
+  dateTo: z.coerce.date().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+});
+
+export const adminUserQuerySchema = z.object({
+  q: z.string().trim().max(120).optional(),
+  role: z.enum(['USER', 'ADMIN']).optional(),
+  district: z.string().trim().max(80).optional(),
+  status: z.enum(['ACTIVE', 'SUSPENDED']).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+});
+
+export const adminReportQuerySchema = z.object({
+  status: z.enum(['OPEN', 'IN_REVIEW', 'RESOLVED']).optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+});
+
+export const adminListingStatusSchema = z.object({
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'SOLD']),
+  rejectionReason: z.string().trim().min(3).max(500).optional(),
+  soldPrice: z.coerce.number().min(0).optional(),
+}).superRefine((value, context) => {
+  if (value.status === 'REJECTED' && !value.rejectionReason) {
+    context.addIssue({ code: 'custom', path: ['rejectionReason'], message: 'A rejection reason is required.' });
+  }
+});
+
+export const featureListingSchema = z.object({
+  isFeatured: z.coerce.boolean().optional(),
+  days: z.coerce.number().int().min(1).max(3650).optional(),
+});
+
+export const updateReportStatusSchema = z.object({
+  status: z.enum(['OPEN', 'IN_REVIEW', 'RESOLVED']),
 });
 
 export const listingQuerySchema = z.object({

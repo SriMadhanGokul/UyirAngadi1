@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiHeart, FiImage, FiMapPin, FiStar } from 'react-icons/fi';
 import type { Listing } from '../types';
 import { formatAge, formatPrice, timeAgo } from '../utils/format';
 import { getCategoryIcon } from '../utils/categoryIcons';
@@ -38,13 +39,15 @@ export default function ListingCard({
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-4xl">🐾</div>
+          <div className="flex h-full w-full items-center justify-center text-4xl text-neutral-400">
+            <FiImage />
+          </div>
         )}
 
         <div className="absolute left-2 top-2 flex flex-wrap gap-1">
           {listing.isFeatured && (
             <span className="rounded-full bg-accent-500 px-2 py-0.5 text-[11px] font-bold text-white shadow">
-              ★ {t('admin.feature')}
+              <span className="inline-flex items-center gap-1"><FiStar />{t('admin.feature')}</span>
             </span>
           )}
           {isSold && (
@@ -73,7 +76,9 @@ export default function ListingCard({
           title={t(isSaved ? 'listing.unsave' : 'listing.save')}
           onClick={() => onToggleSave(listing._id)}
         >
-          {isSaved ? '♥' : '♡'}
+          <span className={isSaved ? 'fill-current' : ''}>
+            <FiHeart />
+          </span>
         </button>
       )}
 
@@ -87,7 +92,9 @@ export default function ListingCard({
 
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-600">
           <span className="inline-flex items-center gap-1">
-            <span aria-hidden>{getCategoryIcon(listing.category)}</span>
+            <span className="flex h-3.5 w-3.5 items-center justify-center" aria-hidden>
+              {getCategoryIcon(listing.category)}
+            </span>
             {t(`categories.${listing.category}`, { defaultValue: listing.category })}
           </span>
           {listing.breed && <span className="text-neutral-400">•</span>}
@@ -98,7 +105,10 @@ export default function ListingCard({
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1 text-xs text-neutral-500">
           <span className="inline-flex items-center gap-1 truncate">
-            📍 {listing.location?.district || t('common.unknown')}
+            <span className="flex shrink-0 items-center justify-center">
+              <FiMapPin />
+            </span>
+            {listing.location?.district || t('common.unknown')}
           </span>
           <span className="shrink-0">{timeAgo(listing.createdAt, i18n.language)}</span>
         </div>

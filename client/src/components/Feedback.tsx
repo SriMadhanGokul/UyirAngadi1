@@ -1,4 +1,6 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FiInbox, FiAlertTriangle } from 'react-icons/fi';
 
 export function Spinner({ className = 'h-6 w-6' }: { className?: string }) {
   return (
@@ -47,17 +49,17 @@ export function ListingGridSkeleton({ count = 8 }: { count?: number }) {
 }
 
 interface EmptyStateProps {
-  icon?: string;
+  icon?: ReactNode;
   title: string;
   description?: string;
   actionLabel?: string;
   onAction?: () => void;
 }
 
-export function EmptyState({ icon = '🐾', title, description, actionLabel, onAction }: EmptyStateProps) {
+export function EmptyState({ icon = <FiInbox />, title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-neutral-300 bg-white/60 px-6 py-14 text-center">
-      <span className="text-4xl" aria-hidden>
+      <span className="flex h-14 w-14 items-center justify-center text-4xl text-brand-600" aria-hidden>
         {icon}
       </span>
       <h3 className="text-base font-semibold text-neutral-900">{title}</h3>
@@ -81,8 +83,8 @@ export function ErrorState({
   const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-6 py-12 text-center">
-      <span className="text-3xl" aria-hidden>
-        ⚠️
+      <span className="flex h-12 w-12 items-center justify-center text-3xl text-red-500" aria-hidden>
+        <FiAlertTriangle />
       </span>
       <p className="text-sm font-medium text-red-800">{message}</p>
       {onRetry && (

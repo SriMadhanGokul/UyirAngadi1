@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiHeart } from 'react-icons/fi';
 import Seo from '../components/Seo';
 import { ErrorBanner, LoadingState, Spinner } from '../components/Feedback';
 import LanguageSwitcher from '../components/LanguageSwitcher';
@@ -117,7 +118,7 @@ export default function LoginPage({ adminMode = false }: { adminMode?: boolean }
         <div className="mb-6 flex items-center justify-between">
           <Link to="/listings" className="flex items-center gap-2">
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-white">
-              🐾
+              <FiHeart />
             </span>
             <span className="text-base font-extrabold text-brand-700">{t('brand.name')}</span>
           </Link>

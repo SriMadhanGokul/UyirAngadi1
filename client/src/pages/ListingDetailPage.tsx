@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiFlag, FiHeart, FiMapPin } from "react-icons/fi";
 import Seo from "../components/Seo";
 import ContactButtons from "../components/ContactButtons";
 import ListingGrid from "../components/ListingGrid";
@@ -142,7 +143,7 @@ export default function ListingDetailPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <Seo title={t("listing.notFound")} noIndex />
-        <p className="text-5xl">🐾</p>
+        <p className="flex justify-center text-5xl text-brand-600"><FiHeart /></p>
         <h1 className="page-title mt-4">{t("listing.notFound")}</h1>
         <p className="mt-2 text-sm text-neutral-600">
           {t("listing.notFoundText")}
@@ -285,7 +286,10 @@ export default function ListingDetailPage() {
                   hidden={isOwner}
                   className="rounded-full border border-neutral-300 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:bg-neutral-50"
                 >
-                  {saved ? `♥ ${t("listing.saved")}` : `♡ ${t("listing.save")}`}
+                  <span className="inline-flex items-center gap-1.5">
+                    <FiHeart />
+                    {saved ? t("listing.saved") : t("listing.save")}
+                  </span>
                 </button>
               </div>
 
@@ -303,7 +307,8 @@ export default function ListingDetailPage() {
               </p>
 
               <p className="mt-3 flex items-center gap-1 text-sm text-neutral-600">
-                📍 {formatPublicLocation(listing)}
+                <span className="shrink-0"><FiMapPin /></span>
+                {formatPublicLocation(listing)}
               </p>
               <p className="mt-1 text-xs text-neutral-500">
                 {t("listing.views", { count: listing.views })} ·{" "}
@@ -343,7 +348,10 @@ export default function ListingDetailPage() {
                 }
                 className="btn-ghost btn-sm mt-4 w-full text-red-600"
               >
-                🚩 {t("listing.report")}
+                <span className="inline-flex items-center justify-center gap-2">
+                  <FiFlag />
+                  {t("listing.report")}
+                </span>
               </button>
             </div>
 

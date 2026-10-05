@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiHeart } from 'react-icons/fi';
 import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Footer() {
@@ -13,7 +14,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2">
               <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-600 text-white">
-                🐾
+                <FiHeart />
               </span>
               <span className="text-base font-extrabold text-brand-700">{t('brand.name')}</span>
             </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiCheckCircle, FiPhoneCall } from 'react-icons/fi';
 import Seo from '../components/Seo';
 import PhotoUploader from '../components/PhotoUploader';
 import type { RejectedFile } from '../components/PhotoUploader';
@@ -282,7 +283,7 @@ export default function SellPage() {
     return (
       <div className="mx-auto max-w-xl px-4 py-16 text-center">
         <Seo title={t('sell.successTitle')} noIndex />
-        <p className="text-5xl">✅</p>
+        <p className="flex justify-center text-5xl text-emerald-600"><FiCheckCircle /></p>
         <h1 className="page-title mt-4">{t('sell.successTitle')}</h1>
         <p className="mt-2 text-sm text-neutral-600">{t('sell.successText')}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
@@ -653,7 +654,7 @@ export default function SellPage() {
             </div>
           </div>
           <p className="rounded-xl bg-neutral-100 px-3 py-2 text-xs text-neutral-600">
-            📞 {t('sell.contactNote')}
+            <span className="inline-flex items-start gap-2"><span className="mt-0.5 shrink-0"><FiPhoneCall /></span>{t('sell.contactNote')}</span>
           </p>
         </div>
 

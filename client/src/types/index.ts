@@ -44,6 +44,7 @@ export interface User {
 
 export interface UserWithStats extends User {
   listingsCount: number;
+  enquiriesCount: number;
 }
 
 export interface ListingSeller {
@@ -182,12 +183,36 @@ export interface AdminStats {
   totalUsers: number;
   totalSellers: number;
   totalBuyers: number;
+  activeSellers: number;
+  activeBuyers: number;
   totalListings: number;
   activeListings: number;
   pendingListings: number;
   soldListings: number;
   rejectedListings: number;
   reportedListings: number;
+  suspendedUsers: number;
+}
+
+export interface AdminListingFilters {
+  status?: ListingStatus | 'ALL';
+  category?: string;
+  district?: string;
+  seller?: string;
+  q?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminUserFilters {
+  q?: string;
+  role?: Role;
+  district?: string;
+  status?: 'ACTIVE' | 'SUSPENDED';
+  page?: number;
+  limit?: number;
 }
 
 /** Payload for creating/updating a listing (multipart-friendly) */

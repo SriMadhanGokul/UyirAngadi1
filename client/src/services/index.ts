@@ -1,6 +1,8 @@
 import api from './api';
 import type {
   AdminStats,
+  AdminListingFilters,
+  AdminUserFilters,
   Category,
   ContactMethod,
   Enquiry,
@@ -62,11 +64,15 @@ export const enquiryService = {
 };
 
 export const adminService = {
+  async categories() {
+    const { data } = await api.get<{ status: string; data: Category[] }>('/admin/categories');
+    return data.data;
+  },
   async stats() {
     const { data } = await api.get<{ status: string; data: AdminStats }>('/admin/stats');
     return data.data;
   },
-  async listings(params: { status?: string; page?: number; limit?: number } = {}) {
+  async listings(params: AdminListingFilters = {}) {
     const { data } = await api.get<Paginated<Listing>>('/admin/listings', { params });
     return data;
   },
@@ -79,22 +85,44 @@ export const adminService = {
   async feature(id: string, days = 7) {
     await api.patch(`/admin/listings/${id}/feature`, { days });
   },
+  async setFeatured(id: string, isFeatured: boolean) {
+    const { data } = await api.patch<{ status: string; data: Listing }>(`/admin/listings/${id}/feature`, { isFeatured });
+    return data.data;
+  },
+  async updateListing(id: string, payload: Record<string, unknown>) {
+    const { data } = await api.put<{ status: string; data: Listing }>(`/admin/listings/${id}`, payload);
+    return data.data;
+  },
+  async setListingStatus(
+    id: string,
+    payload: { status: string; rejectionReason?: string; soldPrice?: number }
+  ) {
+    const { data } = await api.patch<{ status: string; data: Listing }>(
+      `/admin/listings/${id}/status`,
+      payload
+    );
+    return data.data;
+  },
   async removeListing(id: string) {
     await api.delete(`/admin/listings/${id}`);
   },
-  async reports() {
-    const { data } = await api.get<{ status: string; data: Report[] }>('/admin/reports');
-    return data.data;
+  async reports(params: { status?: ReportStatus; page?: number; limit?: number } = {}) {
+    const { data } = await api.get<Paginated<Report>>('/admin/reports', { params });
+    return data;
   },
   async updateReport(id: string, status: ReportStatus) {
-    await api.patch(`/admin/reports/${id}`, { status });
-  },
-  async users() {
-    const { data } = await api.get<{ status: string; data: UserWithStats[] }>('/admin/users');
+    const { data } = await api.patch<{ status: string; data: Report }>(`/admin/reports/${id}`, { status });
     return data.data;
+  },
+  async users(params: AdminUserFilters = {}) {
+    const { data } = await api.get<Paginated<UserWithStats>>('/admin/users', { params });
+    return data;
   },
   async suspendUser(id: string, isSuspended: boolean) {
     await api.patch(`/admin/users/${id}/suspend`, { isSuspended });
+  },
+  async deleteUser(id: string) {
+    await api.delete(`/admin/users/${id}`);
   },
   async createCategory(payload: Partial<Category>) {
     const { data } = await api.post<{ status: string; data: Category }>(

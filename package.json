@@ -20,5 +20,9 @@
   "engines": {
     "node": "20.x"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.4"
+  }
 }

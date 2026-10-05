@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiBarChart2, FiHeart, FiLock, FiPlus, FiShield, FiUser } from 'react-icons/fi';
 import DashboardLayout from '../layouts/DashboardLayout';
 import type { NavItem } from '../layouts/DashboardLayout';
 import Seo from '../components/Seo';
@@ -10,9 +11,9 @@ import { TAMIL_NADU_DISTRICTS } from '../utils/constants';
 import { maskPhone } from '../utils/format';
 
 export const PROFILE_NAV_ITEMS: NavItem[] = [
-  { to: '/dashboard', labelKey: 'seller.dashboard', icon: '📊', end: true },
-  { to: '/favourites', labelKey: 'nav.favourites', icon: '♥' },
-  { to: '/profile', labelKey: 'nav.profile', icon: '👤' },
+  { to: '/dashboard', labelKey: 'seller.dashboard', icon: <FiBarChart2 />, end: true },
+  { to: '/favourites', labelKey: 'nav.favourites', icon: <FiHeart /> },
+  { to: '/profile', labelKey: 'nav.profile', icon: <FiUser /> },
 ];
 
 /** Editable name + district/taluk/village. Phone is identity, never editable. */
@@ -74,13 +75,13 @@ export default function ProfilePage() {
             </div>
           </div>
           <p className="mt-4 rounded-xl bg-neutral-100 px-3 py-2 text-xs text-neutral-600">
-            🔒 {t('profile.phoneLocked')}
+            <span className="inline-flex items-start gap-2"><FiLock />{t('profile.phoneLocked')}</span>
           </p>
           <p className="mt-3 rounded-xl bg-neutral-100 px-3 py-2 text-xs text-neutral-600">
-            🛡 {t('profile.securityText')}
+            <span className="inline-flex items-start gap-2"><FiShield />{t('profile.securityText')}</span>
           </p>
           <Link to="/sell" className="btn-primary mt-4 w-full">
-            + {t('seller.addListing')}
+            <span className="inline-flex items-center justify-center gap-1.5"><FiPlus />{t('seller.addListing')}</span>
           </Link>
         </div>
 

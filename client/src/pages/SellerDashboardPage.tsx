@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiBarChart2, FiCheckCircle, FiClock, FiEye, FiHeart, FiMessageSquare, FiUser } from 'react-icons/fi';
 import DashboardLayout, { type NavItem } from '../layouts/DashboardLayout';
 import Seo from '../components/Seo';
 import StatusBadge from '../components/StatusBadge';
@@ -13,9 +14,9 @@ import { formatPrice, formatPublicLocation } from '../utils/format';
 const PAGE_SIZE = 10;
 
 const SELLER_NAV_ITEMS: NavItem[] = [
-  { to: '/dashboard', labelKey: 'seller.dashboard', icon: '📊', end: true },
-  { to: '/favourites', labelKey: 'nav.favourites', icon: '♥' },
-  { to: '/profile', labelKey: 'nav.profile', icon: '👤' },
+  { to: '/dashboard', labelKey: 'seller.dashboard', icon: <FiBarChart2 />, end: true },
+  { to: '/favourites', labelKey: 'nav.favourites', icon: <FiHeart /> },
+  { to: '/profile', labelKey: 'nav.profile', icon: <FiUser /> },
 ];
 
 type ConfirmState = { kind: 'delete' | 'sold'; listing: Listing } | null;
@@ -104,10 +105,10 @@ export default function SellerDashboardPage() {
   };
 
   const cards = [
-    { label: t('seller.activeListings'), value: stats?.activeListingsCount ?? 0, icon: '✅' },
-    { label: t('seller.pendingApproval'), value: stats?.pendingListingsCount ?? 0, icon: '⏳' },
-    { label: t('seller.sold'), value: stats?.soldListingsCount ?? 0, icon: '🤝' },
-    { label: t('seller.totalEnquiries'), value: stats?.totalEnquiriesCount ?? 0, icon: '💬' },
+    { label: t('seller.activeListings'), value: stats?.activeListingsCount ?? 0, icon: <FiCheckCircle /> },
+    { label: t('seller.pendingApproval'), value: stats?.pendingListingsCount ?? 0, icon: <FiClock /> },
+    { label: t('seller.sold'), value: stats?.soldListingsCount ?? 0, icon: <FiBarChart2 /> },
+    { label: t('seller.totalEnquiries'), value: stats?.totalEnquiriesCount ?? 0, icon: <FiMessageSquare /> },
   ];
 
 
@@ -133,9 +134,9 @@ export default function SellerDashboardPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {cards.map((card) => (
           <div key={card.label} className="card p-4">
-            <p className="text-2xl" aria-hidden>
+            <span className="flex h-8 w-8 items-center justify-center text-2xl text-brand-600" aria-hidden>
               {card.icon}
-            </p>
+            </span>
             <p className="mt-1 text-2xl font-extrabold text-neutral-900">{card.value}</p>
             <p className="text-xs font-medium text-neutral-500">{card.label}</p>
           </div>
@@ -148,7 +149,7 @@ export default function SellerDashboardPage() {
           <p className="px-4 py-8 text-center text-sm text-neutral-500">{t('common.loading')}</p>
         ) : listings.length === 0 ? (
           <div className="px-4 pb-6">
-            <EmptyState icon="🐄" title={t('seller.noListings')} description={t('seller.createFirst')} />
+            <EmptyState icon={<FiCheckCircle />} title={t('seller.noListings')} description={t('seller.createFirst')} />
           </div>
         ) : (
           <ul className="divide-y divide-neutral-100">
@@ -158,7 +159,7 @@ export default function SellerDashboardPage() {
                   {listing.photos[0] ? (
                     <img src={listing.photos[0]} alt="" className="h-full w-full object-cover" />
                   ) : (
-                    <span className="grid h-full w-full place-items-center text-2xl">🐾</span>
+                    <span className="grid h-full w-full place-items-center text-2xl text-brand-600"><FiHeart /></span>
                   )}
                 </Link>
                 <div className="min-w-0 flex-1">
@@ -172,7 +173,7 @@ export default function SellerDashboardPage() {
                     {formatPrice(listing.price)}
                   </p>
                   <p className="truncate text-xs text-neutral-500">
-                    {formatPublicLocation(listing)} · 👁 {listing.views}
+                    {formatPublicLocation(listing)} · <span className="inline-flex align-middle"><FiEye /></span> {listing.views}
                   </p>
                   {listing.status === 'SOLD' && listing.soldPrice !== undefined && (
                     <p className="mt-1 text-xs font-semibold text-emerald-700">

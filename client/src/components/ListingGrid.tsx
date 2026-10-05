@@ -13,7 +13,7 @@ interface ListingGridProps {
   onToggleSave?: (id: string) => void;
   emptyTitle?: string;
   emptyDescription?: string;
-  emptyIcon?: string;
+  emptyIcon?: React.ReactNode;
   emptyActionLabel?: string;
   onEmptyAction?: () => void;
   skeletonCount?: number;
@@ -30,7 +30,7 @@ export default function ListingGrid({
   onToggleSave,
   emptyTitle,
   emptyDescription,
-  emptyIcon = '🐾',
+  emptyIcon = null,
   emptyActionLabel,
   onEmptyAction,
   skeletonCount = 8,

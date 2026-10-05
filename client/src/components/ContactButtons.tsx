@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiMessageSquare, FiPhoneCall } from "react-icons/fi";
 import { enquiryService } from "../services";
 import { useAuth } from "../context/AuthContext";
 import type { Listing } from "../types";
@@ -59,7 +60,10 @@ export default function ContactButtons({
           className="btn-primary w-full text-base"
           onClick={goToLogin}
         >
-          📞 {t("listing.callSeller")}
+          <span className="inline-flex items-center justify-center gap-2">
+            <FiPhoneCall />
+            {t("listing.callSeller")}
+          </span>
         </button>
 
         <button
@@ -67,7 +71,8 @@ export default function ContactButtons({
           className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-[#1eb755]"
           onClick={goToLogin}
         >
-          💬 {t("listing.whatsappSeller")}
+          <FiMessageSquare />
+          {t("listing.whatsappSeller")}
         </button>
 
         <p className="text-center text-xs text-neutral-500">
@@ -91,7 +96,10 @@ export default function ContactButtons({
         onClick={() => logEnquiry("CALL")}
         rel="nofollow"
       >
-        📞 {t("listing.callSeller")}
+        <span className="inline-flex items-center justify-center gap-2">
+          <FiPhoneCall />
+          {t("listing.callSeller")}
+        </span>
       </a>
 
       <a
@@ -101,7 +109,8 @@ export default function ContactButtons({
         className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-[#1eb755]"
         onClick={() => logEnquiry("WHATSAPP")}
       >
-        💬 {t("listing.whatsappSeller")}
+        <FiMessageSquare />
+        {t("listing.whatsappSeller")}
       </a>
     </div>
   );

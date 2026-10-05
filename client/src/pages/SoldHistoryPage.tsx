@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FiShoppingBag } from 'react-icons/fi';
 import Seo from '../components/Seo';
 import ListingGrid from '../components/ListingGrid';
 import Pagination from '../components/Pagination';
@@ -50,7 +51,7 @@ export default function SoldHistoryPage() {
         noIndex
       />
 
-      <h1 className="page-title">🤝 {t('search.soldHistoryTitle')}</h1>
+      <h1 className="flex items-center gap-2 page-title"><FiShoppingBag />{t('search.soldHistoryTitle')}</h1>
       <p className="mt-1 text-sm text-neutral-600">
         {t('search.soldHistorySubtitle')} · {t('search.results', { count: meta.total })}
       </p>
@@ -61,7 +62,7 @@ export default function SoldHistoryPage() {
           isLoading={isLoading}
           error={error}
           onRetry={() => load(meta.page || 1)}
-          emptyIcon="🤝"
+          emptyIcon={<FiShoppingBag />}
           emptyTitle={t('search.soldHistoryTitle')}
           emptyDescription={t('search.noResultsText')}
           emptyActionLabel={t('buyer.browse')}

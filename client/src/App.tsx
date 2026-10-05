@@ -11,7 +11,11 @@ import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import FavouritesPage from "./pages/FavouritesPage";
 import SellerDashboardPage from "./pages/SellerDashboardPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminOverviewPage from "./pages/AdminOverviewPage";
+import AdminUsersPage from "./pages/AdminUsersPage";
+import AdminListingsPage from "./pages/AdminListingsPage";
+import AdminReportsPage from "./pages/AdminReportsPage";
+import AdminCategoriesPage from "./pages/AdminCategoriesPage";
 import MyEnquiriesPage from "./pages/MyEnquiriesPage";
 import StaticPage from "./pages/StaticPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -110,7 +114,39 @@ export default function App() {
             path="admin"
             element={
               <ProtectedRoute adminOnly>
-                <AdminDashboardPage />
+                <AdminOverviewPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/users"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminUsersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/listings"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminListingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/reports"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminReportsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/categories"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminCategoriesPage />
               </ProtectedRoute>
             }
           />

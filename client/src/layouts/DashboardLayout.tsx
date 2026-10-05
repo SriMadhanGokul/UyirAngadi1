@@ -1,16 +1,18 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import MobileBottomNav from '../components/MobileBottomNav';
 import { cx } from '../utils/format';
 
 interface NavItem {
   to: string;
   labelKey: string;
-  icon: string;
+  icon: ReactNode;
   end?: boolean;
 }
 
@@ -41,7 +43,6 @@ export default function DashboardLayout({
 }) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
-
   const navClass = ({ isActive }: { isActive: boolean }) =>
     cx(
       'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
@@ -67,7 +68,9 @@ export default function DashboardLayout({
             <nav className="card space-y-1 p-2">
               {items.map((item) => (
                 <NavLink key={item.to} to={item.to} className={navClass} end={item.end}>
-                  <span aria-hidden>{item.icon}</span>
+                  <span className="flex h-4 w-4 items-center justify-center text-base leading-none" aria-hidden>
+                    {item.icon}
+                  </span>
                   {t(item.labelKey)}
                 </NavLink>
               ))}
@@ -76,7 +79,9 @@ export default function DashboardLayout({
                 onClick={logout}
                 className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
               >
-                <span aria-hidden>↩</span>
+                <span className="flex h-4 w-4 items-center justify-center text-base leading-none" aria-hidden>
+                  <FiLogOut />
+                </span>
                 {t('nav.logout')}
               </button>
             </nav>
@@ -98,38 +103,7 @@ export default function DashboardLayout({
         </main>
       </div>
 
-      {/* Mobile bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-neutral-200 bg-white/95 backdrop-blur lg:hidden">
-        <div className="mx-auto flex max-w-lg items-stretch justify-around gap-1 px-2 py-1.5">
-          {items.slice(0, 5).map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                cx(
-                  'flex flex-1 flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 text-[11px] font-medium',
-                  isActive ? 'text-brand-700' : 'text-neutral-500'
-                )
-              }
-            >
-              <span className="text-lg leading-none" aria-hidden>
-                {item.icon}
-              </span>
-              <span className="truncate">{t(item.labelKey)}</span>
-            </NavLink>
-          ))}
-          <Link
-            to="/"
-            className="flex flex-1 flex-col items-center gap-0.5 rounded-lg px-1 py-1.5 text-[11px] font-medium text-neutral-500"
-          >
-            <span className="text-lg leading-none" aria-hidden>
-              🏠
-            </span>
-            <span>{t('nav.home')}</span>
-          </Link>
-        </div>
-      </nav>
+      <MobileBottomNav />
     </div>
   );
 }

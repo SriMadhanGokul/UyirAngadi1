@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FiFilter, FiShoppingBag } from "react-icons/fi";
 import Seo from "../components/Seo";
 import ListingGrid from "../components/ListingGrid";
 import Pagination from "../components/Pagination";
@@ -14,6 +15,7 @@ import {
   SORT_OPTIONS,
   TAMIL_NADU_DISTRICTS,
 } from "../utils/constants";
+import { getCategoryIcon } from "../utils/categoryIcons";
 
 interface FilterState {
   category: string;
@@ -175,12 +177,7 @@ export default function SearchPage() {
     filters.category,
     filters.breed,
     filters.district,
-    filters.taluk,
     filters.gender,
-    filters.minPrice,
-    filters.maxPrice,
-    filters.minAge,
-    filters.maxAge,
   ].filter(Boolean).length;
 
   const clearAll = () => {
@@ -234,11 +231,11 @@ export default function SearchPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Link to="/sell" className="btn-accent btn-sm">
-            + {t("search.addAnimal")}
-          </Link>
           <Link to="/sold-history" className="btn-outline btn-sm">
-            🤝 {t("search.soldHistoryTitle")}
+            <span className="flex items-center gap-1.5">
+              <FiShoppingBag />
+              {t("search.soldHistoryTitle")}
+            </span>
           </Link>
           <button
             type="button"
@@ -246,7 +243,10 @@ export default function SearchPage() {
             onClick={() => setShowFilters((v) => !v)}
             aria-expanded={showFilters}
           >
-            ⚙ {showFilters ? t("search.hideFilters") : t("search.showFilters")}
+            <span className="flex items-center gap-1.5">
+              <FiFilter />
+              {showFilters ? t("search.hideFilters") : t("search.showFilters")}
+            </span>
             {activeCount > 0 && (
               <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-brand-600 px-1 text-[10px] font-bold text-white">
                 {activeCount}
@@ -270,27 +270,47 @@ export default function SearchPage() {
         </div>
       </div>
 
+      <div className="mb-5 overflow-x-auto pb-1">
+        <div className="flex min-w-max items-center gap-2">
+          <button
+            type="button"
+            onClick={() => applyFilters({ category: "", breed: "" })}
+            className={[
+              "rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
+              !filters.category
+                ? "border-brand-600 bg-brand-600 text-white shadow-sm"
+                : "border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100",
+            ].join(" ")}
+          >
+            {t("search.allCategories")}
+          </button>
+          {categories.map((category) => {
+            const isActive = filters.category === category.key;
+            return (
+              <button
+                key={category.key}
+                type="button"
+                onClick={() => applyFilters({ category: category.key, breed: "" })}
+                className={[
+                  "flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors",
+                  isActive
+                    ? "border-brand-600 bg-brand-600 text-white shadow-sm"
+                    : "border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100",
+                ].join(" ")}
+              >
+                <span className="flex h-4 w-4 items-center justify-center" aria-hidden>
+                  {getCategoryIcon(category.key)}
+                </span>
+                <span>{isTamil ? category.nameTa : category.nameEn}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {showFilters && (
         <div className="card mb-5 p-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <label className="field-label">{t("listing.category")}</label>
-              <select
-                className="field"
-                value={filters.category}
-                onChange={(e) =>
-                  applyFilters({ category: e.target.value, breed: "" })
-                }
-              >
-                <option value="">{t("search.allCategories")}</option>
-                {categories.map((category) => (
-                  <option key={category.key} value={category.key}>
-                    {isTamil ? category.nameTa : category.nameEn}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             <div>
               <label className="field-label">{t("listing.breed")}</label>
               <select
@@ -325,16 +345,6 @@ export default function SearchPage() {
             </div>
 
             <div>
-              <label className="field-label">{t("search.taluk")}</label>
-              <input
-                className="field"
-                value={filters.taluk}
-                onChange={(e) => applyFilters({ taluk: e.target.value })}
-                placeholder={t("search.taluk")}
-              />
-            </div>
-
-            <div>
               <label className="field-label">{t("listing.gender")}</label>
               <select
                 className="field"
@@ -350,58 +360,6 @@ export default function SearchPage() {
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div>
-              <label className="field-label">{t("search.minPrice")}</label>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                className="field"
-                value={filters.minPrice}
-                onChange={(e) => applyFilters({ minPrice: e.target.value })}
-                placeholder="₹ 0"
-              />
-            </div>
-
-            <div>
-              <label className="field-label">{t("search.maxPrice")}</label>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                className="field"
-                value={filters.maxPrice}
-                onChange={(e) => applyFilters({ maxPrice: e.target.value })}
-                placeholder="₹ 500000"
-              />
-            </div>
-
-            <div>
-              <label className="field-label">{t("search.minAge")}</label>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                className="field"
-                value={filters.minAge}
-                onChange={(e) => applyFilters({ minAge: e.target.value })}
-                placeholder="0"
-              />
-            </div>
-
-            <div>
-              <label className="field-label">{t("search.maxAge")}</label>
-              <input
-                type="number"
-                min={0}
-                inputMode="numeric"
-                className="field"
-                value={filters.maxAge}
-                onChange={(e) => applyFilters({ maxAge: e.target.value })}
-                placeholder="20"
-              />
             </div>
 
             <div className="sm:col-span-2">

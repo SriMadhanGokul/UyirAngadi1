@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FiCheckCircle, FiClock, FiFlag, FiShield, FiStar, FiUser, FiUsers } from 'react-icons/fi';
 import DashboardLayout, { type NavItem } from '../layouts/DashboardLayout';
 import Seo from '../components/Seo';
 import StatusBadge from '../components/StatusBadge';
@@ -13,8 +14,8 @@ import { formatPrice, formatPublicLocation, timeAgo } from '../utils/format';
 const PAGE_SIZE = 10;
 
 const ADMIN_NAV_ITEMS: NavItem[] = [
-  { to: '/admin', labelKey: 'admin.dashboard', icon: '🛡', end: true },
-  { to: '/profile', labelKey: 'nav.profile', icon: '👤' },
+  { to: '/admin', labelKey: 'admin.dashboard', icon: <FiShield />, end: true },
+  { to: '/profile', labelKey: 'nav.profile', icon: <FiUser /> },
 ];
 
 const MODERATION_STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'SOLD'] as const;
@@ -105,10 +106,10 @@ export default function AdminDashboardPage() {
   };
 
   const cards = [
-    { label: t('admin.totalUsers'), value: stats?.totalUsers ?? 0, icon: '👥' },
-    { label: t('admin.activeListings'), value: stats?.activeListings ?? 0, icon: '✅' },
-    { label: t('admin.pendingListings'), value: stats?.pendingListings ?? 0, icon: '⏳' },
-    { label: t('admin.reportedListings'), value: stats?.reportedListings ?? 0, icon: '🚩' },
+    { label: t('admin.totalUsers'), value: stats?.totalUsers ?? 0, icon: <FiUsers /> },
+    { label: t('admin.activeListings'), value: stats?.activeListings ?? 0, icon: <FiCheckCircle /> },
+    { label: t('admin.pendingListings'), value: stats?.pendingListings ?? 0, icon: <FiClock /> },
+    { label: t('admin.reportedListings'), value: stats?.reportedListings ?? 0, icon: <FiFlag /> },
   ];
 
 
@@ -121,7 +122,9 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {cards.map((card) => (
           <div key={card.label} className="card p-4">
-            <p className="text-2xl" aria-hidden>{card.icon}</p>
+            <span className="flex h-8 w-8 items-center justify-center text-2xl text-brand-600" aria-hidden>
+              {card.icon}
+            </span>
             <p className="mt-1 text-2xl font-extrabold text-neutral-900">{card.value}</p>
             <p className="text-xs font-medium text-neutral-500">{card.label}</p>
           </div>
@@ -152,7 +155,7 @@ export default function AdminDashboardPage() {
           <p className="px-4 py-8 text-center text-sm text-neutral-500">{t('common.loading')}</p>
         ) : listings.length === 0 ? (
           <div className="px-4 pb-6">
-            <EmptyState icon="🛡" title={t('admin.moderateListings')} description={t('admin.noData')} />
+            <EmptyState icon={<FiShield />} title={t('admin.moderateListings')} description={t('admin.noData')} />
           </div>
         ) : (
           <ul className="mt-2 divide-y divide-neutral-100">
@@ -200,7 +203,7 @@ export default function AdminDashboardPage() {
                     )}
                     {status === 'APPROVED' && (
                       <button type="button" className="btn-outline btn-sm" disabled={busyId === listing._id} onClick={() => feature(listing._id)}>
-                        ★ {t('admin.feature')}
+                        <span className="inline-flex items-center gap-1"><FiStar />{t('admin.feature')}</span>
                       </button>
                     )}
                   </div>
